@@ -10,12 +10,12 @@ By the end of the lab, all tests in the report should be passing.
 */
 
 const studentInformation = {
-  name: "FILL_IN_YOUR_NAME_HERE",
-  grade: "FILL_IN_YOUR_GRADE_HERE",
-  advisor: "FILL_IN_YOUR_ADVISOR_HERE",
-  major: "FILL_IN_YOUR_MAJOR_HERE",
-  graduationYear: "FILL_IN_YOUR_GRADUATION_YEAR_HERE",
-  imageUrl: "ADD_A_URL_TO_ANY_IMAGE_HERE",
+  name: "Kareem",
+  grade: "Sophomore",
+  advisor: "Mr. Gaynor",
+  major: "Computer Science",
+  graduationYear: "2025",
+  imageUrl: "./image.jpeg"
 }
 
 let semester = "Spring Semester"
@@ -39,6 +39,10 @@ const studentData = {
   ],
 }
 
+let totalCredits = 0;
+let totalPoints = 0;
+let gpaAvg = 0;
+
 const gpaPointsLookup = {
   "A+": 4.0,
   A: 4.0,
@@ -60,6 +64,19 @@ const gpaPointsLookup = {
  */
 const dropdownEl = document.querySelector(".dropdown")
 // ADD more query selectors here
+const stuName = document.querySelector("#student-name");
+const advisor = document.querySelector("#student-advisor");
+const major = document.querySelector("#student-major");
+const gradeLevel = document.querySelector("#student-grade-level");
+const gradYear = document.querySelector("#student-graduation-year");
+const imageURL = document.querySelector("#student-image");
+const semesterDiv = document.querySelector(".selector-dropdown");
+const semesterH2 = document.querySelector(".dropdown-button");
+const semesterSpan = document.querySelector("dropdown-label");
+const fallSemester = document.querySelector("#fall-semester");
+const springSemester = document.querySelector("#spring-semester");
+const winterTerm = document.querySelector("#winter-term");
+const reportCardTable = document.querySelector("#report-card-table");
 
 /**
  * SOLUTIONS FOR STUDENT INFO DOM UPDATES
@@ -72,6 +89,7 @@ const dropdownEl = document.querySelector(".dropdown")
  */
 function updateStudentName(studentName) {
   // code goes here
+  stuName.innerHTML = studentName;
 }
 
 /**
@@ -81,6 +99,7 @@ function updateStudentName(studentName) {
  */
 function updateStudentGradeLevel(studentGradeLevel) {
   // code goes here
+  gradeLevel.innerHTML = studentGradeLevel;
 }
 
 /**
@@ -90,6 +109,7 @@ function updateStudentGradeLevel(studentGradeLevel) {
  */
 function updateStudentAdvisor(studentAdvisor) {
   // code goes here
+  advisor.innerHTML = studentAdvisor;
 }
 
 /**
@@ -99,6 +119,7 @@ function updateStudentAdvisor(studentAdvisor) {
  */
 function updateMajor(studentMajor) {
   // code goes here
+  major.innerHTML = studentMajor;
 }
 
 /**
@@ -108,6 +129,7 @@ function updateMajor(studentMajor) {
  */
 function updateStudentGraduationYear(graduationYear) {
   // code goes here
+  gradYear.innerHTML = graduationYear;
 }
 
 /**
@@ -118,6 +140,7 @@ function updateStudentGraduationYear(graduationYear) {
  */
 function updateStudentImage(imageUrl) {
   // code goes here
+  imageURL.setAttribute("src", imageUrl);
 }
 
 /**
@@ -141,7 +164,14 @@ function populateStudentInfo(studentInformationObject) {
  */
 function addReportCardHeaders(reportCardTableElement) {
   // update the code here
-  reportCardTableElement.innerHTML += ``
+  reportCardTableElement.innerHTML += `<div class="table-row table-header">
+      <h4 class="code-col">Code</h4>
+      <h4 class="name-col">Name</h4>
+      <h4 class="sem-col">Semester</h4>
+      <h4 class="cred-col">Credits</h4>
+      <h4 class="lett-col">Letter</h4>
+      <h4 class="pts-col">Points</h4>
+    </div>`;
 }
 
 /**
@@ -155,7 +185,12 @@ function addCourseRowToReportCard(reportCardTableElement, course, rowNum) {
   // update the code here with information about the course passed to this function
   reportCardTableElement.innerHTML += `
   <div class="table-row course-row row-${rowNum + 1} ${rowNum % 2 === 1 ? "odd" : "even"}">
-
+    <h4 class="code-col">${course.code}</h4>
+    <h4 class="name-col">${course.name}</h4>
+    <h4 class="sem-col">${course.semester}</h4>
+    <h4 class="cred-col"><span class="credit">${course.credits}</span> credits</h4>
+    <h4 class="lett-col gpa">${course.grade}</h4>
+    <h4 id="gpa-${rowNum + 1}" class="pts-col">${gpaPointsLookup[course.grade]}</h4>
   </div>
   `
 }
@@ -164,14 +199,32 @@ function addCourseRowToReportCard(reportCardTableElement, course, rowNum) {
  * This function should add HTML for the totals row in the report card.
  */
 function addTotalsRow(reportCardTableElement) {
-  reportCardTableElement.innerHTML += ``
+  reportCardTableElement.innerHTML += `
+  <div class="table-row totals even">
+    <h4 class="code-col"></h4>
+    <h4 class="name-col"></h4>
+    <h4 class="sem-col">Totals:</h4>
+    <h4 id="total-credits" class="cred-col"> ${totalCredits} credits </h4>
+    <h4 class="lett-col"></h4>
+    <h4 id="total-pts" class="pts-col">${totalPoints}</h4>
+  </div>
+          `
 }
 
 /**
  * This function should add HTML for the final row in the report card.
  */
 function addGpaRow(reportCardTableElement) {
-  reportCardTableElement.innerHTML += ``
+  reportCardTableElement.innerHTML += `
+  <div class="table-row gpa odd">
+    <h4 class="code-col"></h4>
+    <h4 class="name-col"></h4>
+    <h4 class="sem-col">GPA:</h4>
+    <h4 class="cred-col"></h4>
+    <h4 class="lett-col"></h4>
+    <h4 id="gpa" class="pts-col"> ${gpaAvg}</h4>               
+  </div>   
+          `
 }
 
 /**
@@ -181,13 +234,31 @@ function addGpaRow(reportCardTableElement) {
  *
  */
 function updateReportCard(reportCardTableElement, currentSemester) {
+  totalCredits = 0;
+  totalPoints = 0;
   // update the dropdown label
-  updateDropdownLabel()
+  updateDropdownLabel();
   // reset the report card table's inner html to an empty string
-  if (reportCardTableElement) reportCardTableElement.innerHTML = ``
-
+  if (reportCardTableElement) {
+      reportCardTableElement.innerHTML = ``;
+    }
+  
   // add your code here
-}
+  addReportCardHeaders(reportCardTableElement);
+  const courses = studentData[currentSemester];
+  let k = 0;
+  courses.forEach((course, i) => {
+    addCourseRowToReportCard(reportCardTableElement, course, i);
+    totalCredits+=course.credits;
+    totalPoints+=gpaPointsLookup[course.grade];
+    k++;
+  });
+
+  gpaAvg = totalPoints/k;
+    //gpaAvg = totalPoints/k;
+  addTotalsRow(reportCardTableElement);
+  addGpaRow(reportCardTableElement);
+  }
 
 /**
  * SOLUTION FOR DROPDOWN EVENT HANDLERS
@@ -271,4 +342,6 @@ function calculateSemesterGpa(reportCardTableElement) {
 
 window.onload = function () {
   // execute your functions here to make sure they run as soon as the page loads
+  populateStudentInfo(studentInformation);
+  updateReportCard(reportCardTable, semester);
 }
