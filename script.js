@@ -221,7 +221,7 @@ function addGpaRow(reportCardTableElement) {
     <h4 class="sem-col">GPA:</h4>
     <h4 class="cred-col"></h4>
     <h4 class="lett-col"></h4>
-    <h4 id="gpa" class="pts-col"> ${gpaAvg}</h4>               
+    <h4 id="gpa" class="pts-col">${gpaAvg}</h4>               
   </div>   
           `
 }
@@ -257,6 +257,8 @@ function updateReportCard(reportCardTableElement, currentSemester) {
     //gpaAvg = totalPoints/k;
   addTotalsRow(reportCardTableElement);
   addGpaRow(reportCardTableElement);
+  addUpStudentCredits();
+  calculateSemesterGpa();
   }
 
 /**
