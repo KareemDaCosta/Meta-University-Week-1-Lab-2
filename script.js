@@ -62,7 +62,6 @@ const gpaPointsLookup = {
 /**
  * QUERY SELECTORS VARIABLES GO HERE
  */
-const dropdownEl = document.querySelector(".dropdown")
 // ADD more query selectors here
 const stuName = document.querySelector("#student-name");
 const advisor = document.querySelector("#student-advisor");
@@ -70,9 +69,9 @@ const major = document.querySelector("#student-major");
 const gradeLevel = document.querySelector("#student-grade-level");
 const gradYear = document.querySelector("#student-graduation-year");
 const imageURL = document.querySelector("#student-image");
-const semesterDiv = document.querySelector(".selector-dropdown");
-const semesterH2 = document.querySelector(".dropdown-button");
-const semesterSpan = document.querySelector("dropdown-label");
+const dropdownElement = document.querySelector(".selector-dropdown");
+const dropdownButtonElement = document.querySelector(".dropdown-button");
+const dropdownLabel = document.querySelector(".dropdown-label");
 const fallSemester = document.querySelector("#fall-semester");
 const springSemester = document.querySelector("#spring-semester");
 const winterTerm = document.querySelector("#winter-term");
@@ -272,10 +271,16 @@ function updateReportCard(reportCardTableElement, currentSemester) {
  */
 function closeDropdown(dropdownElement) {
   // code goes here
+  if(!dropdownElement.classList.contains('closed')) {
+    dropdownElement.classList.add("closed");
+  }
 }
 
 function openDropdown(dropdownElement) {
   // code goes here
+  if(dropdownElement.classList.contains('closed')) {
+    dropdownElement.classList.remove("closed");
+  }
 }
 
 /**
@@ -285,6 +290,7 @@ function openDropdown(dropdownElement) {
  */
 function updateDropdownLabel() {
   // code goes here
+  dropdownLabel.innerHTML = semester;
 }
 
 /**
@@ -304,6 +310,25 @@ function addEventListeners(
   // Add 3 event listeners - one for the fall semester option, the spring semester option, and the winter term option
   // Each callback function one should update the `semester` variable,
   // call the `updateReportCard` function, and close the dropdown
+  dropdownButtonElement.addEventListener("click", function() {
+    openDropdown(dropdownElement);
+  });
+  fallSemesterElement.addEventListener("click", function() {
+    semester = "Fall Semester";
+    updateReportCard(reportCardTableElement, semester);
+    closeDropdown(dropdownElement);
+  });
+  springSemesterElement.addEventListener("click", function() {
+    semester = "Spring Semester";
+    updateReportCard(reportCardTableElement, semester);
+    closeDropdown(dropdownElement);
+  });
+  winterTermElement.addEventListener("click", function() {
+    semester = "Winter Term"
+    updateReportCard(reportCardTableElement, semester);
+    closeDropdown(dropdownElement);
+  });
+
 }
 
 /***************
@@ -344,4 +369,5 @@ window.onload = function () {
   // execute your functions here to make sure they run as soon as the page loads
   populateStudentInfo(studentInformation);
   updateReportCard(reportCardTable, semester);
+  addEventListeners(dropdownElement, dropdownButtonElement, reportCardTable, fallSemester, springSemester, winterTerm);
 }
